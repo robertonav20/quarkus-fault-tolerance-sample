@@ -6,10 +6,10 @@ import org.eclipse.microprofile.faulttolerance.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import java.time.temporal.ChronoUnit;
 
 @Path("/")
@@ -27,8 +27,8 @@ public class GreetingResource {
     public String fallback() {
         try {
             Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            exception("Fallback exception");
         }
         return "Hello from RESTEasy Reactive";
     }
@@ -41,8 +41,8 @@ public class GreetingResource {
     public String timeout() {
         try {
             Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            exception("Timeout exception");
         }
         return "Hello from RESTEasy Reactive";
     }
@@ -55,8 +55,8 @@ public class GreetingResource {
     public String bulkhead() {
         try {
             Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            exception("Bulkead exception");
         }
         return "Hello from RESTEasy Reactive";
     }
@@ -64,7 +64,7 @@ public class GreetingResource {
     @GET
     @Path("/circuit-breaker")
     @Produces(MediaType.TEXT_PLAIN)
-    @CircuitBreaker(requestVolumeThreshold = 1)
+    @CircuitBreaker(requestVolumeThreshold = 1, failureRatio = 1, successThreshold = 1)
     @Counted(value = "circuit-breaker-api", description = "Number of REST call received")
     public String circuitBreaker() {
         exception("Circuit breaker exception");
